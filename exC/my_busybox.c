@@ -1,12 +1,13 @@
-/// \file maze.c
+/// \file my_busybox.c
 /// \brief Replica of the os busybox in c
 /// \author Karel.SVBD, CFPT-i
-/// \date 16.01.2023
-/// \version 0.1
+/// \date 17.01.2023
+/// \version 1.0
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
 //For main
 #define MIN_MAIN_ARGUMENTS 1
@@ -19,7 +20,8 @@
 #define MIN_ARGUMENTS_SEQ 3
 
 //For my_random
-#define ARGUMENTS_RANDOM 3
+#define ARGUMENTS_RANDOM 4
+#define RANDOM_SEED time(0)
 
 //For both
 #define MARGIN 1
@@ -31,7 +33,7 @@
 //Argv[1] min
 //Argv[3] (optional) interval
 //Argv[2] max
-void my_seq(int argc, char *argv[]){
+static void my_seq(int argc, char *argv[]){
 
     if(argc >= MIN_ARGUMENTS_SEQ)
     {
@@ -60,38 +62,35 @@ void my_seq(int argc, char *argv[]){
 //Argv[0] filename
 //Argv[1] min (included)
 //Argv[2] max (included)
-void my_random(int argc, char *argv[]){
+static void my_random(int argc, char *argv[]){
 
-    if(argc == ARGUMENT_RANDOM)
+    if(argc == ARGUMENTS_RANDOM)
     {
         int firstArguement = atoi(argv[FIRST_ARGUMENT]);
         int secondArguement = atoi(argv[SECOND_ARGUMENT]);
-
         // seed for random
-        srand(time(0));
+        srand((unsigned)RANDOM_SEED);
+        // creating random
         int result = (rand() % (secondArguement - firstArguement + MARGIN)) + firstArguement;
         printf("%d\n", result);
 
     }
     else{
-        printf("%s%d%s%d\n", "Wrong number of arguments. Given : ", argc, " asked : ", ARGUMENT_RANDOM);
+        printf("%s%d%s%d\n", "Wrong number of arguments. Given : ", argc, " asked : ", ARGUMENTS_RANDOM);
     }
 }
 
 
 int main(int argc, char *argv[])
 {
-    if(strcmp(argv[1], MY_SEQ_NAME)){
-        printf("%s\n", "oui");
+    //Arguement testing
+    //Comparing the second arguement with the names of the functions
+    if(strcmp(argv[1], MY_SEQ_NAME) == 0){
+        my_seq(argc, argv);
     }
-
-    /*//excludion filename with margin
-    if(!(argv == MIN_MAIN_ARGUMENTS - MARGIN)){
+    else if(strcmp(argv[1], MY_RANDOM_NAME) == 0){
         my_random(argc, argv);
-    }
-    else{
-
-    }*/
+    }  
     
     return 0;
 }
