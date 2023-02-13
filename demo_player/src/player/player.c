@@ -9,6 +9,7 @@
 #include <SDL2/SDL.h>
 #include <assert.h>
 #include "../inc/player.h"
+#include "../inc/ray.h"
 
 #ifdef UNIT_TESTS
 #include "../inc/tests.h"
@@ -59,6 +60,14 @@ static void PlayerFree(Player *self) {
     free(self);
 }
 
+static void PlayerGravity(struct Player_s *p, float deltaTime){
+    p->y +=  9.81 * deltaTime;
+}
+
+static void RandomColor(struct Player_s *p){
+    p->color = rand() % 256;
+}
+
 Player* new_Player(int x, int y, int pWindowWidth, int pWindowHeight){
     Player *self = malloc(sizeof(Player));
     self->x = x;
@@ -84,10 +93,48 @@ Player* new_Player(int x, int y, int pWindowWidth, int pWindowHeight){
     self->ProcessInput = PlayerProcessInput;
     self->Update = PlayerUpdate;
     self->Render = PlayerRender;
+    self->Gravity = PlayerGravity;
+    self->RandomColor = RandomColor;
     self->Free = PlayerFree;
 
     return self;
 }
+
+static void UpdateRay(Ray *self, Player *player){
+    self->x = player->x;
+    self->y = player->y;
+}
+
+static void RenderRay(Ray *self, SDL_Renderer *renderer, Player *player){
+    player->RandomColor(player);
+    SDL_RenderDrawLine(renderer, self->x, self->y, self->x + self->length, self->y);
+    SDL_RenderDrawLine(renderer, self->x, self->y, self->x, self->y + self->length);
+}
+
+static void FreeRay(Ray *self){
+    free(self);
+}
+
+Ray* new_Ray(Player *p){
+    Ray *self = malloc(sizeof(Ray));
+    self->x = p->x;
+    self->y = p->y;
+    self->color = 0xFF;
+    self->length = 1000;
+    self->player = p;
+
+    self->Update = UpdateRay;
+    self->Render = RenderRay;
+    self->Free = FreeRay;
+
+    return self;
+}
+
+
+
+
+
+
 
 #ifdef UNIT_TESTS
 

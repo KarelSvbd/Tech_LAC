@@ -11,6 +11,7 @@
 */
 #include <SDL2/SDL.h>
 #include "../inc/player.h"
+#include "../inc/ray.h"
 
 #define FPS 30.0
 #define FRAME_TIME_LENGTH_MS (1000.0 / FPS)
@@ -60,6 +61,7 @@ int main() {
 
     /* build a rectangle */
     Player *player = new_Player(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+    Ray *ray = new_Ray(player);
 
     isGameRunning = SDL_TRUE;
     ticksLastFrame = 0;//default value to avoid warning
@@ -87,6 +89,12 @@ int main() {
 
         /* move rectangle */
         player->Update(player, deltaTime);
+        ray->Update(ray, player);
+        
+
+        player->Gravity(player, deltaTime);
+
+        player->RandomColor(player);
 
         /* clear background */
         SDL_SetRenderDrawColor(renderer, BACKGROUND_RED, BACKGROUND_GREEN, BACKGROUND_BLUE, BACKGROUND_ALPHA);
@@ -94,6 +102,7 @@ int main() {
 
         /* render objects */
         player->Render(player, renderer);
+        ray->Render(ray, renderer, player);
 
         /* update the screen with any rendering performed since the previous call */
         SDL_RenderPresent(renderer);
@@ -102,6 +111,7 @@ int main() {
 
     /* SDL2 cleanup before exiting */
     player->Free(player);
+    ray->Free(ray);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();     

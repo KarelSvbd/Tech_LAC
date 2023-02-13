@@ -15,6 +15,8 @@ typedef struct Player_s {
     void (*ProcessInput)(struct Player_s *p, SDL_Event pEvent);
     void (*Update)(struct Player_s *p, float deltaTime);
     void (*Render)(struct Player_s *p, SDL_Renderer *renderer);
+    void (*Gravity)(struct Player_s *p, float deltaTime);
+    void (*RandomColor)(struct Player_s *p);
     void (*Free)(struct Player_s *p);
 } Player;
 
